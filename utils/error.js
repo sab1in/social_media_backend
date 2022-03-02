@@ -14,7 +14,7 @@ const handleCastError = (res, err) => {
 const error = (err, req, res, next) => {
   if (err.name === "ValidationError") {
     handleValidationError(err, res);
-  } else if ((err.name = "CastError")) {
+  } else if (err.name === "CastError") {
     handleCastError(res, err);
   } else {
     res.status(500).json(err);

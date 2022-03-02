@@ -1,12 +1,25 @@
 const asyncFunction = require("../utils/asyncCatch");
 const Post = require("../models/Post");
 const User = require("../models/User");
+const formidable = require("formidable");
 
 // post create controller
+// const createPost = asyncFunction(async (req, res, next) => {
+//   req.body.userId = req.user.id;
+//   const newPost = await Post.create(req.body);
+//   res.status(200).json(newPost);
+// });
+
 const createPost = asyncFunction(async (req, res, next) => {
-  req.body.userId = req.user.id;
-  const newPost = await Post.create(req.body);
-  res.status(200).json(newPost);
+  const form = new formidable.IncomingForm();
+  console.log(form);
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ err, fields, files });
+    }
+    res.status(200).json({ err, fields, files });
+  });
 });
 
 // put update post controller
