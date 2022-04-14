@@ -58,7 +58,7 @@ app.get("/uploads/:id", async (req, res, next) => {
 app.use(error);
 
 process.on("unhandledRejection", () => {
-  console.log("error unhandled");
+  console.log("error unhandled!");
 });
 
 app.listen(process.env.PORT || 5000, () => {
