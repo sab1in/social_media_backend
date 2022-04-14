@@ -5,20 +5,21 @@ const mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
+const path = require("path");
+
 //secuirty pacakages
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
 const error = require("./utils/error");
 const swagger = require("./swagger.json");
-const bodyParser = require("body-parser");
 
 const app = express();
 
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGODB_URL, {
+  .connect(process.env.MONGO, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -39,19 +40,20 @@ const limiter = (requests, time, message) =>
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
-// app.use(express.raw({ type: "*/*", limit: 996869  }));
-
-// app.use(express({ limit: 996869 }));
-// app.use(express.json({ limit: 990000 }));
+app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use("/auth/login", limiter(1, 1000));
+app.use("/auth/login", limiter(10, 1000));
 app.use("/auth", require("./routes/auth"));
 app.use("/user", require("./routes/user"));
 app.use("/post", require("./routes/post"));
+
+app.get("/uploads/:id", async (req, res, next) => {
+  res.sendFile(path.join(__dirname, "uploads") + "\\" + req.params.id);
+});
 
 app.use(error);
 

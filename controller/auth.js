@@ -2,6 +2,7 @@ const asyncFunction = require("../utils/asyncCatch");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const validator = require("../utils/validator");
 
 // Register controller
 const register = asyncFunction(async (req, res, next) => {
@@ -9,6 +10,13 @@ const register = asyncFunction(async (req, res, next) => {
   const user = await User.findOne({ email });
   if (user) {
     return res.status(400).send({ msg: "User already exists" });
+  }
+  if (
+    !validator("username", username) ||
+    validator("email", email) == null ||
+    !validator("password", req.body.password)
+  ) {
+    return res.status(400).send({ msg: "Invalid input" });
   }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -50,5 +58,4 @@ const login = asyncFunction(async (req, res, next) => {
     });
   }
 });
-
 module.exports = { register, login };

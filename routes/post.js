@@ -16,17 +16,17 @@ const {
 } = require("../controller/post");
 
 //create post
-router.post("/", verifyTokenAndAuthorize, createPost);
+router.post("/:id", verifyTokenAndAuthorize, createPost);
 
 router.put("/:id", verifyTokenAndAuthorize, putUpdatePost);
 
 router.delete("/:id", verifyTokenAndAuthorize, deletePost);
 
-router.get("/:id", verifyTokenAndAuthorize, getPostById);
+router.get("/:id", verifyToken, getPostById);
 
 router.put("/:id/like", verifyToken, likePost);
 
-router.get("/timeline/:userId", verifyTokenAndAuthorize, Timeline);
+router.get("/timeline/:userId", verifyToken, Timeline);
 
 router.get("/feed", verifyToken, Feed);
 

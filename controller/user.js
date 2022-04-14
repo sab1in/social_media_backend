@@ -44,4 +44,36 @@ const getUserById = asyncFunction(async (req, res, next) => {
   else res.status(200).json(userData);
 });
 
-module.exports = { updateUser, deleteUser, getAllUser, getUserById };
+//follow another user
+const followUser = asyncFunction(async (req, res, next) => {
+  const { id } = req.params;
+  const { followingId } = req.body;
+  const userData = await User.findById(id);
+  if (!userData) {
+    res.status(400).json({ msg: "User not found" });
+  } else if (userData.followers.includes(followingId)) {
+    await User.findByIdAndUpdate(id, { $pull: { followers: followingId } });
+    await User.findByIdAndUpdate(followingId, { $pull: { followings: id } });
+    res.status(200).json({ msg: "unfollowed" });
+  } else {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $push: { followers: followingId } },
+      { new: true }
+    );
+    const updatedFollowingUser = await User.findByIdAndUpdate(
+      followingId,
+      { $push: { followings: id } },
+      { new: true }
+    );
+    res.status(200).json(updatedFollowingUser);
+  }
+});
+
+module.exports = {
+  updateUser,
+  deleteUser,
+  getAllUser,
+  getUserById,
+  followUser,
+};

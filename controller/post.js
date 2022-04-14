@@ -2,6 +2,9 @@ const asyncFunction = require("../utils/asyncCatch");
 const Post = require("../models/Post");
 const User = require("../models/User");
 const formidable = require("formidable");
+const imageUpload = require("../utils/imageUpload");
+const fs = require("fs");
+const path = require("path");
 
 // post create controller
 // const createPost = asyncFunction(async (req, res, next) => {
@@ -12,13 +15,30 @@ const formidable = require("formidable");
 
 const createPost = asyncFunction(async (req, res, next) => {
   const form = new formidable.IncomingForm();
-  console.log(form);
   form.parse(req, async (err, fields, files) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ err, fields, files });
-    }
-    res.status(200).json({ err, fields, files });
+    var oldPath = files.file.filepath;
+    var newPath =
+      path.join(__dirname.split("controller")[0], "uploads") +
+      "\\" +
+      files.file.originalFilename;
+    var rawData = fs.readFileSync(oldPath);
+    console.log(req.params.id);
+    fs.writeFile(newPath, rawData, async (err) => {
+      try {
+        if (err) res.status(500).json({ error: err });
+        const description = fields.description;
+        console.log("yem");
+        const newPost = await Post.create({
+          userId: req.params.id,
+          desc: description,
+          img: "/uploads" + "/" + files.file.originalFilename,
+        });
+
+        return res.status(200).json(newPost);
+      } catch (error) {
+        res.status(200).jons(error);
+      }
+    });
   });
 });
 
@@ -29,9 +49,13 @@ const putUpdatePost = asyncFunction(async (req, res, next) => {
   if (!PostData) {
     res.status(400).json({ msg: "Post not found" });
   } else {
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      req.body.desc,
+      {
+        new: true,
+      }
+    );
     res.status(200).json(updatedPost);
   }
 });

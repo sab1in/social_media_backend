@@ -4,9 +4,11 @@ const asyncFunction = require("../utils/asyncCatch");
 const verifyToken = asyncFunction(async (req, res, next) => {
   const bearerHeader = req.headers.token;
   if (typeof bearerHeader !== "undefined") {
+    console.log(bearerHeader);
     const bearerToken = bearerHeader.split(" ")[1];
     jwt.verify(bearerToken, process.env.JWT_SEC, (err, authData) => {
       if (err) {
+        console.log(err);
         res.status(403).send({ msg: "Forbidden" });
       }
       res.user = authData;
