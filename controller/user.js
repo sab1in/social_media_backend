@@ -33,13 +33,14 @@ const deleteUser = asyncFunction(async (req, res, next) => {
 
 //get all user controller
 const getAllUser = asyncFunction(async (req, res, next) => {
-  const usersData = await User.find();
-  res.status(200).json(usersData);
+  //get user data expect password
+  const userData = await User.find({}, { password: 0 });
+  res.status(200).json(userData);
 });
 
 //get user by id controller
 const getUserById = asyncFunction(async (req, res, next) => {
-  const userData = await User.findById(req.params.id);
+  const userData = await User.findById(req.params.id, { password: 0 });
   if (!userData) res.status(400).json({ msg: "User not found" });
   else res.status(200).json(userData);
 });
