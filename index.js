@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
+const cors = require("cors");
 
 const path = require("path");
 
@@ -17,6 +18,13 @@ const swagger = require("./swagger.json");
 const app = express();
 
 dotenv.config();
+
+const corsOptions = {
+  origin: "*",
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 mongoose
   .connect(process.env.MONGO, {
