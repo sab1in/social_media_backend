@@ -13,6 +13,7 @@ const {
   likePost,
   Timeline,
   Feed,
+  uploadProfile,
 } = require("../controller/post");
 
 //create post

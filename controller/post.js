@@ -112,6 +112,37 @@ const Feed = asyncFunction(async (req, res, next) => {
   res.status(200).json(posts);
 });
 
+//profile upload controller
+const uploadProfile = asyncFunction(async (req, res, next) => {
+  const form = new formidable.IncomingForm();
+  const id = req.params.id;
+  const userData = await User.findById(id);
+  if (!userData) {
+    res.status(500).json({ msg: "User not found" });
+  }
+  form.parse(req, async (err, fields, files) => {
+    4;
+    var oldPath = files.file.filepath;
+    var newPath =
+      path.join(__dirname.split("controller")[0], "uploads") +
+      "\\" +
+      files.file.originalFilename;
+    var rawData = fs.readFileSync(oldPath);
+    fs.writeFile(newPath, rawData, async (err) => {
+      try {
+        if (err) res.status(500).json({ error: err });
+        const user = await User.findById(req.user.id);
+        userData.profilePicture =
+          "/uploads" + "/" + files.file.originalFilename;
+        await user.save();
+        res.status(200).json(user);
+      } catch (error) {
+        res.status(500).jons(error);
+      }
+    });
+  });
+});
+
 module.exports = {
   createPost,
   putUpdatePost,
@@ -120,4 +151,5 @@ module.exports = {
   likePost,
   Timeline,
   Feed,
+  uploadProfile,
 };

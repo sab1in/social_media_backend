@@ -6,10 +6,14 @@ const {
   getAllUser,
   getUserById,
   followUser,
+  patchUpdateUser,
 } = require("../controller/user");
 
-// Update user
+// put Update user
 router.put("/:id", verifyTokenAndAuthorize, updateUser);
+
+// patch Update user
+router.patch("/:id", verifyTokenAndAuthorize, patchUpdateUser);
 
 // Delete user
 router.delete("/:id", verifyTokenAndAuthorize, deleteUser);

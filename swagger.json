@@ -1,9 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a simple example NodeJS API project to demonstrate Swagger Documentation",
+        "description": "Api documentation for social media",
         "version": "1.0.0",
-        "title": "Tasks API",
+        "title": "Social media API",
         "contact": {
             "email": "sabin0kharel@gmail.com"
         },
@@ -13,8 +13,8 @@
         }
     },
     "schemes": ["http", "https"],
-    "host": "localhost:3080",
-    "basePath": "/api",
+    "host": "localhost:5000",
+    "basePath": "/",
     "securityDefinitions":{
         "APIKeyHeader":{
             "type": "apiKey",
@@ -26,54 +26,71 @@
         "APIKeyHeader": []
     },
     "paths" : {
-        "/login" : {
+        "/auth/login" : {
             "post" : {
                 "summary" : "Login User",
                 "description": "Login User",
                 "produces": ["application/json"],
-                "parameters": [{
-                    "name": "email",
-                    "in": "query",
-                    "type": "string",
-                    "format": "email",
-                    "required": true
-                  },{
-                    "name": "password",
-                    "in": "query",
-                    "type": "string",
-                    "format": "password",
-                    "required": true
-                  }],
+                "consumes": ["application/json"],
+                "tags": ["Auth"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User object",
+                        "required": true,
+                        "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "User email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "User password"
+                                    }
+                                }
+                            }
+                        }
+                    ],
                 "responses": {
                     "200": {
                         "description": "successful operation"
                     },
                     "400": {
                         "description": "Invalid status value"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
         },
-        "/todo" : {
+        "/auth/register" : {
             "post" : {
                 "summary" : "Save the task",
                 "description": "Save the task",
                 "produces": ["application/json"],
                 "consumes": ["application/json"],
+                "tags": ["Auth"],
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "body",
+                        "name": "username",
                         "description": "task object",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "task" : {
-                                    "type": "object",
-                                    "$ref": "#/definitions/Task"
-                                } 
-                            }
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "body",
+                        "name": "password",
+                        "description": "task object",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -96,42 +113,195 @@
                 }
             }
         },
-        "/todos/{id}" : {
-            "put" : {
-                "summary" : "Update the tasks",
-                "description": "Update the tasks",
+        "/user/{id}" : {
+            "get" : {
+                "summary" : "Get User",
+                "description": "Get User",
                 "produces": ["application/json"],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "task id that needs to be deleted",
-                        "required": true,
-                        "type": "string"
+                "consumes": ["application/json"],
+                "tags": ["User"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "type": "string",
+                    "required": true
+                  }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {"$ref": "#/definitions/User"}
                     },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "task object",
-                        "required": true,
+                    "400": {
+                        "description": "Invalid status value",
                         "schema": {
-                            "type": "object",
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete User",
+                "description": "Delete User",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "tags": ["User"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "type": "string",
+                    "required": true
+                  }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {"$ref": "#/definitions/User"}
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update User",
+                "description": "Update User",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "tags": ["User"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "name": "body",
+                    "in": "body",
+                    "description": "User object",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
                             "properties": {
-                                "task" : {
-                                    "type": "object",
-                                    "$ref": "#/definitions/Task"
-                                } 
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "username": {
+                                    "type": "string"
+                                },
+                                "city": {
+                                    "type": "string"
+                                },
+                                "from": {
+                                    "type": "string"
+                                },
+                                "desc": {
+                                    "type": "string"
+                                },
+                                "relationship": {
+                                    "type": "integer",
+                                    "description": "1-Single, 2-In a relationship, 3-others",
+                                    "enum": [
+                                        "1",
+                                        "2",
+                                        "3"
+                                    ]
+                                }
+                            }
+                        }
+                    }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {"$ref": "#/definitions/User"}
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/": {
+                "get" : {
+                    "summary" : "Get all User",
+                    "description": "Get User",
+                    "produces": ["application/json"],
+                    "consumes": ["application/json"],
+                    "tags": ["User"],
+                    "responses": {
+                        "200": {
+                            "description": "successful operation",
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/User"
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Invalid status value",
+                            "schema": {
+                                "$ref": "#/definitions/InvalidResponse"
                             }
                         }
                     }
-                ],
+                }
+        },
+        "/user/follow/{id}": {
+            "post": {
+                "summary": "Follow User",
+                "description": "Follow User",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "tags": ["User"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "User ID",
+                    "type": "string",
+                    "required": true
+                  },{
+                    "name": "followinId",
+                    "in": "body",
+                    "type": "string",
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {"$ref": "#/definitions/User"}
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/": {
+            "get": {
+                "summary": "Get all Post",
+                "description": "Get Post",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "tags": ["Post"],
                 "responses": {
                     "200": {
                         "description": "successful operation",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/todosResponse"
+                                "$ref": "#/definitions/Post"
                             }
                         }
                     },
@@ -144,29 +314,39 @@
                 }
             }
         },
-        "/todo/{id}" : {
-            "delete" : {
-                "summary" : "Delete the task",
-                "description": "Delete the task",
+        "/post/{id}":{
+            "post": {
+                "summary": "Create Post",
+                "description": "Create Post",
                 "produces": ["application/json"],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "task id that needs to be deleted",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
+                "consumes": ["application/json"],
+                "tags": ["Post"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "Post object",
+                    "required": true
+                },{
+                    "name": "body",
+                    "in": "body",
+                    "description": "Post object",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                            "properties": {
+                                "desc": {
+                                    "type": "string"
+                                },
+                                "img": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }],
                 "responses": {
                     "200": {
                         "description": "successful operation",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/todosResponse"
-                            }
-                        }
+                        "schema": {"$ref": "#/definitions/Post"}
                     },
                     "400": {
                         "description": "Invalid status value",
@@ -179,48 +359,86 @@
         }
     }, 
     "definitions": {
-        "todosResponse": {
+        "User": {
             "type": "object",
             "properties": {
-                "id": {
-                     "type": "integer"
+                "_id": {
+                     "type": "string"
                 },
-                "task": {
+                "username": {
                     "type": "string"
                 },
-                "assignee": {
+                "profilePicture": {
                     "type": "string"
                 },
-                "status": {
+                "coverPicture": {
                     "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isAdmin": {
+                    "type": "boolean"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "string"
+                },
+                "followers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "following": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
-        "Task": {
+        "Post": {
             "type": "object",
             "properties": {
-                "task": {
+                "_id": {
+                     "type": "string"
+                },
+                "userId": {
                     "type": "string"
                 },
-                "assignee": {
+                "img": {
                     "type": "string"
                 },
-                "status": {
+                "desc": {
                     "type": "string"
+                },
+                "likes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
         "InvalidResponse": {
             "type": "object",
             "properties": {
-                "statusCode": {
-                    "type": "string"
-                },
-                "message": {
+                "msg": {
                     "type": "string"
                 }
             }
-
         }
     }
 }

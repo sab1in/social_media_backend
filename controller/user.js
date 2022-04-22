@@ -19,6 +19,26 @@ const updateUser = asyncFunction(async (req, res, next) => {
   res.status(200).json({ msg: "updated" });
 });
 
+//patch update user controller
+const patchUpdateUser = asyncFunction(async (req, res, next) => {
+  const getData = {
+    ...req.body,
+  };
+  const dbData = await User.findById(req.params.id);
+  const updateData = Object.assign(dbData, getData);
+
+  if (dbData) {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+    res.status(200).json({ msg: "updated" });
+  } else {
+    res.status(404).json({ msg: "user not found" });
+  }
+});
+
 // delete user controller
 const deleteUser = asyncFunction(async (req, res, next) => {
   const { id } = req.params;
@@ -77,4 +97,5 @@ module.exports = {
   getAllUser,
   getUserById,
   followUser,
+  patchUpdateUser,
 };

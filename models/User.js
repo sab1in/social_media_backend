@@ -19,9 +19,11 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
+      default: "",
     },
     coverPicture: {
       type: String,
+      default: "",
     },
     followers: {
       type: Array,
@@ -38,14 +40,17 @@ const UserSchema = new mongoose.Schema(
     desc: {
       type: String,
       max: 50,
+      default: "",
     },
     city: {
       type: String,
       max: 50,
+      default: "",
     },
     from: {
       type: String,
       max: 50,
+      default: "",
     },
     relationship: {
       type: Number,

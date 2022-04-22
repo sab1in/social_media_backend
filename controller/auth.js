@@ -44,18 +44,18 @@ const login = asyncFunction(async (req, res, next) => {
 
     if (!oldUser || !(await bcrypt.compare(password, oldUser.password))) {
       res.status(400).json({ message: "invalid credentials" });
+    } else {
+      const token = jwt.sign(
+        { id: oldUser._id, isAdmin: oldUser.isAdmin },
+        process.env.JWT_SEC,
+        { expiresIn: "10d" }
+      );
+      res.status(200).json({
+        id: oldUser._id,
+        isAdmin: oldUser.isAdmin,
+        token: token,
+      });
     }
-
-    const token = jwt.sign(
-      { id: oldUser._id, isAdmin: oldUser.isAdmin },
-      process.env.JWT_SEC,
-      { expiresIn: "10d" }
-    );
-    res.status(200).json({
-      id: oldUser._id,
-      isAdmin: oldUser.isAdmin,
-      token: token,
-    });
   }
 });
 module.exports = { register, login };
